@@ -37,14 +37,14 @@ def view_login(request):
         if user is not None:
             login(request, user)
             request.session['member_id'] = user.id
-#            return redirect('index')
             latest_problem_list = Problem.objects.order_by('id')
             User_list = User.objects.order_by('id')
             Tag_list = Tag.objects.order_by('id')
             context = {'latest_problem_list': latest_problem_list,
-                       'User_list': User_list, 'Tag_list': Tag_list}
+                       'User_list': User_list, 'Tag_list': Tag_list, 
+                       'member_id': user.id}
             
-            return render(request, 'polls/index.html', context)
+            return render(request, 'polls/home.html', context)
         
         else:
             flag = True;

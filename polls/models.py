@@ -31,6 +31,7 @@ class Submission(models.Model):
     type_status = (
         ('Accepted', 'AC'), ('Time limit exceeded', 'TLE'), ('Wrong answer', 'WA')
     )
+    
     problem = models.ForeignKey(Problem)
     user = models.ForeignKey(User)
     status = models.CharField(max_length = 20, choices = type_status)

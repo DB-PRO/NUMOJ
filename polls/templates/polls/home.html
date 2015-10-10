@@ -1,6 +1,6 @@
 {% extends "polls/base.html" %}
 
-{% block Tag %}
+{% block News %}
 
 	{% for news in News_list %}
 		<div class="news">
@@ -15,12 +15,12 @@
 	<a href = "{% url 'polls:createTag'%}"> create tag </a>
 	
 	<ul>
-	  
+	
 	{% for tag in Tag_list %}
 	<li>
 	  {{tag.tagName}}
 	</li>
     {% endfor %}
-	  
+	
 	</ul>
 {% endblock %}
