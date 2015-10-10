@@ -1,0 +1,26 @@
+{% extends "polls/base.html" %}
+
+{% block Tag %}
+
+	{% for news in News_list %}
+		<div class="news">
+			<h1>{{news.title}}</h1>
+			<p>{{news.news}}</p>
+			<h3>{{news.time}}</h3>
+		</div>
+	{% endfor %}
+
+	<hr>
+
+	<a href = "{% url 'polls:createTag'%}"> create tag </a>
+	
+	<ul>
+	  
+	{% for tag in Tag_list %}
+	<li>
+	  {{tag.tagName}}
+	</li>
+    {% endfor %}
+	  
+	</ul>
+{% endblock %}

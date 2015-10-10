@@ -1,0 +1,18 @@
+<h1>create user</h1>
+
+<form action="{% url 'polls:createUserAction' %}" method="post">
+  {% csrf_token %}
+  
+  <label for="firstName">firstName</label>
+  <input type="text" name="firstName">
+  <label for="lastName">lastName</label>
+  <input type="text" name="lastName">
+  <label for="password">password</label>
+  <input type="text" name="password">
+  <label for="email">email</label>
+  <input type="text" name="email">
+  <label for="sex">sex</label>
+  <input type="text" name="sex">
+  
+<input type="submit" value="create" />
+</form>

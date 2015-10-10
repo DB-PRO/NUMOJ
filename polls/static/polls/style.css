@@ -1,0 +1,52 @@
+#container { 
+		  width: 80%;
+		  height: auto;
+		  margin-left: auto ;
+		  margin-right: auto; 
+		}
+
+		#header{
+			background-color: #ffffff;
+			height: 50px;
+		}
+
+		#menu{
+			height: 30px;
+			background-color: #ffffff;
+			width: 100%;
+		    margin-left: auto;
+		    margin-right: auto;
+		    margin-top: 0;
+		}
+
+		a{
+			text-decoration: none;
+			font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+			font-size: 15px;
+			font-weight: bold;
+			margin: 0px 10px 0px 10px;
+			
+		}
+
+		.menu-a{
+			color: #666;
+			font-size: 20px;
+		}
+
+		#content{
+			float: left;
+			width: 70%;
+			color: #666;
+
+		}
+		.news{
+			width: 90%;
+		}
+
+		table{
+			color: #000000		
+		}
+
+		body{
+			font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+		}

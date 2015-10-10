@@ -1,0 +1,13 @@
+created user {{ fname }}
+
+<ul>
+  {% for user in User_list %}
+  <li>
+    {{user.userName}}
+  </li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'polls:index' %}">index</a>
+
+

@@ -1,0 +1,13 @@
+created user {{ problemName }}
+
+<ul>
+  {% for problem in Problem_list %}
+  <li>
+    {{problem.problemName}}
+  </li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'polls:index' %}">index</a>
+
+

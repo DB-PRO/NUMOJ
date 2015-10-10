@@ -1,0 +1,52 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
+
+member id is {{ member_id }}
+
+<hr>
+
+<a href = "{% url 'polls:createProblem' %}"> create Problem </a>
+
+{% if latest_problem_list %}
+<ul>
+  {% for problem in latest_problem_list %}
+  <li>
+    <a href="{% url 'polls:problem' problem.id %}">{{ problem.problemStatement }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No polls are available.</p>
+{% endif %}
+
+<hr>
+
+<a href = "{% url 'polls:createTag'%}"> create tag </a>
+<ul>
+  
+  {% for tag in Tag_list %}
+  <li>
+    {{tag.tagName}}
+  </li>
+  {% endfor %}
+  
+</ul>
+
+<hr>
+
+
+<a href = "{% url 'polls:createUser' %}"> create User </a>
+
+<ul>
+
+  {% for user in User_list %}
+  <li>
+  <a href="{% url 'polls:user' user.id %}"> {{user.username}} </a>
+  </li>
+  {% endfor %}
+
+</ul>
+
+<hr>
+

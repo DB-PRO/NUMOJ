@@ -1,0 +1,12 @@
+{% extends "polls/base.html" %}
+
+{% block problems %}
+
+	<h1>{{ problem.problemName }}</h1>
+	<p>{{problem.problemStatement}}</p>
+	<hr>
+	<strong> Time limit: </strong> {{problem.timelimit}} <br>
+	<strong> Date: </strong> {{problem.problemDate}} <br>
+	<strong> Extra Information: </strong> {{problem.extraInformation}} <br>
+	
+{% endblock %}

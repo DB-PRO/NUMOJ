@@ -1,0 +1,6 @@
+<h1>{{ user.firstName }}</h1>
+<ul>
+{% for  in user._set.all %}
+    <li>{{ choice.choice_text }}</li>
+{% endfor %}
+</ul>

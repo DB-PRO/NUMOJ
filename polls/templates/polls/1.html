@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="loginPage.css">
+</head>
+<body>
+
+</body>
+</html>
+
+<form action="{% url 'polls:loginAction' %}" method="post">
+  {% csrf_token %}
+  
+  <label for="loginName">Name</label>
+  <input type="text" name="name">
+  <label for="password">password</label>
+  <input type="text" name="password">
+  
+<input type="submit" value="create" />
+</form>

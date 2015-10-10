@@ -1,0 +1,10 @@
+<h1>create tag</h1>
+
+<form action="{% url 'polls:createTagAction' %}" method="post">
+  {% csrf_token %}
+
+  <label for="tagName">TagName</label>
+  <input type="text" name="TagName">
+  
+<input type="submit" value="Vote" />
+</form>
