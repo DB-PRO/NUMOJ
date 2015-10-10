@@ -1,0 +1,27 @@
+{% extends "polls/base.html" %}
+
+{% block submit %}
+  <div>
+    <h1>Илгээх</h1>
+
+      {% csrf_token %}
+
+      <form action="{% url 'polls:submitAction' %}" method="post">
+        {% csrf_token %}
+      
+        <label for="problemId">Бодлогын дугаар</label>
+        <input type="text" name="problemId">
+        
+        <label for="Pro">Програмчлалын хэл:</label>
+
+        <select>
+		  <option value="volvo">C++</option>
+		  <option value="saab">Pascal</option>
+		  <option value="mercedes">Python</option>
+		  <option value="mercedes">Java</option>
+		</select>
+
+        <input type="submit" value="create" />
+      </form>
+  </div>
+{% endblock %}

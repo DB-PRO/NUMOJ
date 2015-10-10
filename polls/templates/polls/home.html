@@ -11,8 +11,9 @@
 	{% endfor %}
 
 	<hr>
-
-	<a href = "{% url 'polls:createTag'%}"> create tag </a>
+	{% if add_Tag %}
+		<a href = "{% url 'polls:createTag'%}"> create tag </a>
+	{% endif %}
 	
 	<ul>
 	

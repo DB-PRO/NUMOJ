@@ -9,10 +9,9 @@ from .models import Problem, Tag, News
 # form .models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.urlresolvers import reverse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Permission
 from django.db import connection
-
 
 def index(request):
     latest_problem_list = Problem.objects.order_by('id')
@@ -20,31 +19,37 @@ def index(request):
     Tag_list = Tag.objects.order_by('id')
     News_list = News.objects.order_by('id')
     member_id = request.session['member_id']
+    
+    add_Tag = False;
+
+    user = User.objects.get(id = member_id)
+    if user is not None:
+        add_Tag = user.has_perm("add_Tag")
+
     context = {'latest_problem_list': latest_problem_list,
                'User_list': User_list, 'Tag_list': Tag_list, 
-               'member_id': member_id, 'News_list': News_list}
+               'member_id': member_id, 'News_list': News_list,
+               'add_Tag': add_Tag}
     
+
     return render(request, 'polls/home.html', context)
 
 
 def view_login(request):
     flag = False
     
+    request.session['member_id'] = 0
+    logout(request)
+
     if request.method == 'POST':
         username = request.POST['name']
         password = request.POST['password']
         user = authenticate(username=username, password = password)
+        user1 = user
         if user is not None:
             login(request, user)
             request.session['member_id'] = user.id
-            latest_problem_list = Problem.objects.order_by('id')
-            User_list = User.objects.order_by('id')
-            Tag_list = Tag.objects.order_by('id')
-            context = {'latest_problem_list': latest_problem_list,
-                       'User_list': User_list, 'Tag_list': Tag_list, 
-                       'member_id': user.id}
-            
-            return render(request, 'polls/home.html', context)
+            return HttpResponseRedirect('/polls/home')
         
         else:
             flag = True;
@@ -126,7 +131,11 @@ def createProblemAction(request):
 def problems(request):
     latest_problem_list = Problem.objects.order_by('id')
     member_id = request.session['member_id']
-    context = {'latest_problem_list': latest_problem_list, 'member_id': member_id}
+    user = User.objects.get(id = member_id)
+    add_problem = False
+    if user is not None:
+        add_problem = user.has_perm("add_problem")
+    context = {'latest_problem_list': latest_problem_list, 'member_id': member_id, 'add_problem': add_problem}
     
     return render(request, 'polls/problems.html', context)
 
@@ -148,3 +157,24 @@ def rank(request):
     context = {'rank_list': result, 'member_id': member_id}
     
     return render(request, 'polls/rank.html', context)
+
+
+def submit(request):
+    return render(request, 'polls/submit.html', {'member_id': member_id})
+
+
+def submitAction(request):
+    fname = request.POST['firstName']
+    lname = request.POST['lastName']
+    pword = request.POST['password']
+    e = request.POST['email']
+    s = request.POST['sex']
+    
+    a = User(firstName = fname, lastName = lname, password = pword,
+             email = e, sex = s)
+    a.save()
+    
+    User_list = User.objects.order_by('id')
+    context = {'User_list': User_list, 'fname': fname}
+    
+    return render(request, 'polls/createdUserResult.html', context)

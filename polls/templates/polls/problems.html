@@ -27,6 +27,7 @@
 	<p>No polls are available.</p>
 	{% endif %}
 
-	<a href = "{% url 'polls:createProblem' %}"> create Problem </a>
-
+	{% if add_problem %}
+		<a href = "{% url 'polls:createProblem' %}"> create Problem </a>
+	{% endif%}
 {% endblock %}
