@@ -1,0 +1,39 @@
+.icon{
+	height: 25px;
+}
+h3{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	
+}
+h3.side{
+	background-color: #E7E7E7;
+	margin-bottom: 0px;
+	border-left: #E7EFFF
+}
+.side_header_left{
+	width: 5px;
+	background-color: #1178bb;
+	height: 31px;
+	float: left
+}
+.side{
+	margin-top: 53px; 
+	margin-right: 20px;
+	background-color: #f8f8f8;
+}
+.side_header{
+	padding-top: 5px;
+	font-size: 18px;
+	font-family: 'Sofia Pro', Arial, Helvetica, sans-serif;
+	font-weight: 500;
+	border-width: 1px;
+	border-right-style: solid;
+	border-top-style: solid;
+    border-top-right-radius: 1em;
+}
+.content{
+	padding-right: 20px;
+	padding-left: 20px;
+	margin-top: 20px; 
+}

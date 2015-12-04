@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 
-
 import datetime
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User, Permission
+import random
 
 # Create your models here.
 class Tag(models.Model):
@@ -15,6 +15,7 @@ class Tag(models.Model):
 
 class Problem(models.Model):
     tag = models.ManyToManyField(Tag)
+    level = models.IntegerField(default = 3)
     problemName = models.CharField(max_length = 60)
     problemStatement = models.CharField(max_length = 60)
     problemDate = models.DateField(max_length = 1, auto_now = True)
@@ -39,6 +40,7 @@ class Submission(models.Model):
     Language = models.CharField(default = "C++", max_length = 20)
     Time = models.FloatField(default = 0.0)
     Memory = models.IntegerField(default = 0)
+    code = models.CharField(max_length = 1000, default = "..code..")
     
     def __str__(self):
         return self.problem.problemName + ' ' + self.user.username

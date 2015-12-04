@@ -1,0 +1,25 @@
+{% extends "polls/base.html" %}
+
+{% block profile %}
+
+<h1>{{ user.username }} {{ user.firstName }} {{user.lastName}}</h1>
+<hr>
+
+<table border = "1">
+  <strong>
+    <tr>
+      <th> ProblemName </th>
+      <th> Status </th>
+      <th> DateTime </th>
+    </tr>
+  </strong>
+  {% for submission in user.submission_set.all %}
+  <tr>
+    <th> {{submission.problem.problemName}} </th>
+    <th> {{submission.status}} </th>
+    <th> {{submission.submittedDate}} </th>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

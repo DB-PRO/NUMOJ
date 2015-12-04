@@ -1,0 +1,58 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>NUM OJ</title>
+</head>
+
+<body>
+	<div id="container">
+		<div id="header"> 
+			<div style="float:left; padding-top: 5px; " >
+				<a style="float: left; font-size: 30px; margin-left: 0px">NUM Online Judge</a>
+			</div>
+			<div style="float:right; padding-top: 14px;">
+				<a href="{% url 'polls:user' member_id %}">{{member_id}}</a>
+				|
+				<a href="{% url 'polls:login' %}">logout</a>
+			</div>
+		</div>
+		<div id="menu">
+			<a class = "menu-a" href="{% url 'polls:index' %}" style="margin-left: 0px">Мэдээ</a>
+			<a class = "menu-a" href="{% url 'polls:problems' %}">Бодлогууд</a>
+			<a class = "menu-a" href="{% url 'polls:rank'%}">Чансаа</a>
+			<a class = "menu-a" href="{% url 'polls:submit'%}">Илгээх</a>
+			<a class = "menu-a" href="">Үр дүн</a>
+			<a class = "menu-a" href="{% url 'polls:submit'%}">Илгээх</a>
+		</div>
+		<hr width="100%">
+		<div>
+			<div id="content">
+				{% block News %}{% endblock %}
+				{% block Tag %}{% endblock %}
+				{% block login %}{% endblock %}
+				{% block problem %}{% endblock %}
+				{% block problems %}{% endblock %}
+				{% block rank %}{% endblock %}
+				{% block submit %}{% endblock %}
+			</div>
+			<div id="sidebar">
+				sidebar
+			</div>
+		</div>
+	</div>
+</body>
+</html>

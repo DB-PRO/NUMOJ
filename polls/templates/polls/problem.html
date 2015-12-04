@@ -1,12 +1,20 @@
 {% extends "polls/base.html" %}
 
 {% block problems %}
+	
+	<div style="margin-left: 60px; margin-right: 20px">
+		<center>
+			<h1>{{ problem.problemName }}</h1>
+			<h5>Бодлогын дугаар: {{problem.id}}</h5>
+		</center>
+		<p>{{problem.problemStatement}}</p>
 
-	<h1>{{ problem.problemName }}</h1>
-	<p>{{problem.problemStatement}}</p>
 	<hr>
-	<strong> Time limit: </strong> {{problem.timelimit}} <br>
-	<strong> Date: </strong> {{problem.problemDate}} <br>
-	<strong> Extra Information: </strong> {{problem.extraInformation}} <br>
+		<center>
+			<strong> Time limit: </strong> {{problem.timelimit}} <br>
+			<strong> Date: </strong> {{problem.problemDate}} <br>
+			<strong> Extra Information: </strong> {{problem.extraInformation}} <br>
+		</center>
+	</div>
 	
 {% endblock %}

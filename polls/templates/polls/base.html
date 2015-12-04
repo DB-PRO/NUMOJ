@@ -4,45 +4,166 @@
 
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>GoGo Мэдээ</title>
+
+    <!-- Timeline CSS -->
+    <link href="{% static 'polls/dist/css/timeline.css' %}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'polls/dist/css/sb-admin-2.css' %}" rel="stylesheet">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'polls/mystyle.css' %}" rel="stylesheet">
+
+	<!-- Bootstrap Core CSS -->
+    <link href="{% static 'polls/bower_components/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="{% static 'polls/bower_components/metisMenu/dist/metisMenu.min.css' %}" rel="stylesheet">
+
+	<title>NUM OJ</title>
+
+	    <!-- jQuery -->
+    <script src="{% static 'polls/bower_components/jquery/dist/jquery.min.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'polls/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="{% static 'polls/bower_components/metisMenu/dist/metisMenu.min.js' %}"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="{% static 'polls/bower_components/raphael/raphael-min.js' %}"></script>
+    <script src="{% static 'polls/bower_components/morrisjs/morris.min.js' %}"></script>
+    <script src="{% static 'polls/js/morris-data.js' %}"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="{% static 'polls/dist/js/sb-admin-2.js' %}"></script>
+
+    <script src="{% static 'polls/js/morris-data.js' %}"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="{% static 'polls/dist/js/sb-admin-2.js' %}"></script>
+    <script type="text/javascript">
+        function my_callback(data){
+           alert(data.message);
+        }
+    
+    </script>
 </head>
 
 <body>
-	<div id="container">
-		<div id="header"> 
-			<div style="float:left; padding-top: 5px; " >
-				<a style="float: left; font-size: 30px; margin-left: 0px">NUM Online Judge</a>
-			</div>
-			<div style="float:right; padding-top: 14px;">
-				<a href="{% url 'polls:user' member_id %}">{{member_id}}</a>
-				|
-				<a href="{% url 'polls:login' %}">logout</a>
-			</div>
-		</div>
-		<div id="menu">
-			<a class = "menu-a" href="{% url 'polls:index' %}" style="margin-left: 0px">Мэдээ</a>
-			<a class = "menu-a" href="{% url 'polls:problems' %}">Бодлогууд</a>
-			<a class = "menu-a" href="{% url 'polls:rank'%}">Чансаа</a>
-			<a class = "menu-a" href="">Илгээх</a>
-			<a class = "menu-a" href="">Үр дүн</a>
-		</div>
-		<hr width="100%">
-		<div>
-			<div id="content">
-				{% block News %}{% endblock %}
-				{% block Tag %}{% endblock %}
-				{% block login %}{% endblock %}
-				{% block problem %}{% endblock %}
-				{% block problems %}{% endblock %}
-				{% block rank %}{% endblock %}
-				{% block submit %}{% endblock %}
-			</div>
-			<div id="sidebar">
-				sidebar
-			</div>
-		</div>
+	<div id="wrapper">
+		<!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        	<!-- nav header -->
+        	<div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'polls:index' %}">NUM Online Judge</a>
+            </div>
+            <!-- top menu-->
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <!--li class="sidebar-search">
+                        <div class="input-group custom-search-form">
+                            <input type="text" class="form-control" placeholder="Search...">
+                            <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">
+                                <img src="{% static 'polls/icons/64/magnifier.png' %}" height="18px">
+                            </button>
+                        </span>
+                        </div>
+                        
+                    </li-->
+                    <li><a href="{% url 'polls:problems' 1 %}"><img src="{% static 'polls/icons/64/game93.png' %}" class="icon"> Бодлогууд</a></li>
+                    <li><a href="{% url 'polls:rank'%}"><img src="{% static 'polls/icons/64/ranking.png' %}" class="icon"> Чансаа</a></li> 
+                    <li><a href="{% url 'polls:submit'%}"><img src="{% static 'polls/icons/64/send4.png' %}" class="icon"> Илгээх</a></li> 
+                    <li><a href="#"><img src="{% static 'polls/icons/64/lifeline6.png' %}" class="icon"> Үр дүн</a></li> 
+                    <li class="dropdown" style="padding-right: 20px">
+                        {% if member_id != 0 %}
+                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="{% static 'polls/icons/64/user168.png' %}" class="icon"> Хэрэглэгч
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="{% url 'polls:user' member_id %}"><img src="{% static 'polls/icons/64/user168.png' %}" class="icon"> Хувийн мэдээлэл </a>
+                                </li>
+                                <li><a href="#"><img src="{% static 'polls/icons/64/wrench1.png' %}" class="icon"> Хувийн мэдээлэл засварлах </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li><a href="{% url 'polls:login'%}"><img src="{% static 'polls/icons/64/logout13.png' %}" class="icon"> Гарах</a>
+                                </li>
+                            </ul>
+                        {% else %}
+                            <a href="{% url 'polls:login' %}">
+                                <img src="{% static 'polls/icons/64/user168.png' %}" class="icon"> 
+                                Нэвтрэх
+                            </a>
+                        {% endif %}
+                        <!-- /.dropdown-user -->
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id="container" style="padding-top: 0px">
+            <div class="row">
+                <div class="col-sm-9">
+                        {% block News %}{% endblock %}
+                        {% block Tag %}{% endblock %}
+                        {% block login %}{% endblock %}
+                        {% block problem %}{% endblock %}
+                        {% block problems %}{% endblock %}
+                        {% block rank %}{% endblock %}
+                        {% block submit %}{% endblock %}
+                        {% block profile %}{% endblock %}
+                </div>
+                <div class="col-sm-3" style="padding-left: 30px; padding-top: 13px">
+                    <center>
+                        {# sidebar top rating#}
+                        {% if top_rank_list %}
+                        <div class="side">
+                            <div>
+                                <div class="side_header_left">
+                                </div>
+                                <div class="side_header">
+                                    Чансаа тэргүүлэгчид
+                                </div>
+                            </div>
+                            <table width="100%" border="1">
+                                <thead>
+                                    <tr>
+                                        <th width="50px" style="text-align: center;">#</th>
+                                        <th style="text-align: center;">Хэрэглэгч</th>
+                                        <th width="70px" style="text-align: center;">Бодсон</th>
+                                    </tr>
+                                </thead>
+                              {% for rank in top_rank_list %}
+                              <tr>
+                                <td style="text-align: center;"> {{rank.rank_index}} </td>
+                                <td> 
+                                    <a href="{% url 'polls:user' rank.userId %}" style="float: left; padding-left: 10px; ">{{ rank.userName }}</a>
+                                </td>
+                                <td style="text-align: center;"> {{rank.solved}}</td>
+                              </tr>
+                              {% endfor %}
+                            </table>
+                        </div>
+                        {% endif %}
+                    </center>
+                </div>
+            </div>
+        </div>
 	</div>
 </body>
 </html>

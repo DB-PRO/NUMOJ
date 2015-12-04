@@ -1,0 +1,69 @@
+{% extends "polls/base.html" %}
+
+{% block problems %}
+    
+    {% if problem_list %}
+	    <center>
+		    <div class="content">
+			    <h3 style="margin-bottom: 0px">
+			    	Бодлогууд
+			    </h3>
+				<table class="table table-striped" width="100%">
+				  <tr> 
+				  	<th width="50px" style="text-align: center;">#</th>
+				  	<th style="text-align: center;">Нэр</th>
+				  	<th width="70px" style="text-align: center;">Төвшин</th>
+				  	<th width="70px" style="text-align: center;">Бодсон</th>
+				  </tr>
+				  {% for item1, item2 in list %}
+				  <tr>
+				  	<td style="text-align: center;"> {{item1.id}} </td>
+				    <td> 
+				    	<a href="{% url 'polls:problem' item1.id %}" style="float: left; padding-left: 10px; ">{{ item1.problemName }}</a>
+				    	{% for x in item2 %}
+				    		<a href="{% url 'polls:tag' x.id 1 %}" style="float: right; padding-right: 10px; ">{{ x.tagName }}</a>
+				    	{% endfor %}
+				   	</td>
+				   	<td style="text-align: center;"><a href="{% url 'polls:level' item1.level 1 %}">{{ item1.level }}</a></td>
+				   	<td style="text-align: center;">123</td>
+				  </tr>
+				  {% endfor %}
+				</table>
+			</div>
+			<div class="pagination">
+			    <span class="step-links">
+			    	<ul class="pager">
+				        {% if problem_list.has_previous %}
+	  						<li class="previous">
+						            <a href="{% url 'polls:tag' tag_id problem_list.previous_page_number %} ">Өмнөх</a>
+					        </li>
+				        {% endif %}
+
+						<ul class="pagination" style="margin-top: 0px">
+							{% for i in pages %}
+								{% if i == problem_list.number %}
+									<li class="active"><a href="{% url 'polls:tag' tag_id i %}">{{i}}</a></li>
+								{% elif i == 0 %}
+									<li class="disabled"><a href="{% url 'polls:tag' tag_id 1 %}">...</a></li>
+								{% else %}		
+									<li><a href="{% url 'polls:tag' tag_id i %}">{{i}}</a></li>
+								{% endif %}
+							{% endfor %}
+	  					</ul>
+  						
+						{% if problem_list.has_next %}
+	  						<li class="next"><a href="{% url 'polls:tag' tag_id problem_list.next_page_number %} ">Дараах</a></li>
+				        {% endif %}
+					</ul>
+			        
+			    </span>
+			</div>
+		</center>
+	{% else %}
+		<p>No polls are available.</p>
+	{% endif %}
+
+	{% if add_problem %}
+		<a href = "{% url 'polls:createProblem' %}"> create Problem </a>
+	{% endif%}
+{% endblock %}

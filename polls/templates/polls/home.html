@@ -11,17 +11,16 @@
 	{% endfor %}
 
 	<hr>
+
 	{% if add_Tag %}
 		<a href = "{% url 'polls:createTag'%}"> create tag </a>
 	{% endif %}
 	
 	<ul>
-	
-	{% for tag in Tag_list %}
-	<li>
-	  {{tag.tagName}}
-	</li>
-    {% endfor %}
-	
+		{% for tag in Tag_list %}
+		<li>
+		  {{tag.tagName}}
+		</li>
+	    {% endfor %}
 	</ul>
 {% endblock %}

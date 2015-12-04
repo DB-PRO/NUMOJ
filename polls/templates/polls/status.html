@@ -1,0 +1,41 @@
+{% extends "polls/base.html" %}
+
+{% block rank %}
+	
+	{% if status_list %}
+	<center>
+	<div class="content">
+		<h3 style="margin-bottom: 0px">
+	    	Чансаа
+	    </h3>
+		<table  class="table table-striped" width="100%">
+		  <tr> 
+		  	<th style="text-align: center;"width="50px">#</th>
+		  	<th style="text-align: center;">Хэзээ</th>
+		  	<th style="text-align: center;">Хэрэглэгч</th>
+		  	<th style="text-align: center;">Бодлого</th>
+		  	<th style="text-align: center;">Хэл</th>
+		  	<th style="text-align: center;">Үр дүн</th>
+		  	<th style="text-align: center;"width="50px">Хугцаа</th>
+		  	<th style="text-align: center;"width="50px">Санах ой</th>
+		  </tr>
+		  {% for status in status_list %}
+			  <tr>
+			  	<td style="text-align: center;"width="50px"></td>
+			  	<td style="text-align: center;">Хэзээ</td>
+			  	<td style="text-align: center;">Хэрэглэгч</td>
+			  	<td style="text-align: center;">Бодлого</td>
+			  	<td style="text-align: center;">Хэл</td>
+			  	<td style="text-align: center;">Үр дүн</td>
+			  	<td style="text-align: center;"width="50px">Хугцаа</td>
+			  	<td style="text-align: center;"width="50px">Санах ой</td>
+			  </tr>
+		  {% endfor %}
+		</table>
+		{% else %}
+		<p>No polls are available.</p>
+		</center>
+	</div>
+	{% endif %}
+	
+{% endblock %}

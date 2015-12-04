@@ -3,24 +3,31 @@
 {% block rank %}
 	
 	{% if rank_list %}
-	<table width="90%" border="1">
-	  <tr> 
-	  	<th width="50px">#</th>
-	  	<th>Хэрэглэгч</th>
-	  	<th width="50px">Бодсон</th>
-	  </tr>
-	  {% for rank in rank_list %}
-	  <tr>
-	  	<td style="text-align: center;"> {{rank.userIid}} </td>
-	    <td> 
-	    	<a href="{% url 'polls:user' rank.userId %}" style="float: left; padding-left: 10px; ">{{ rank.userName }}</a>
-	   	</td>
-	   	<td style="text-align: center;"> {{rank.solved}}</td>
-	  </tr>
-	  {% endfor %}
-	</table>
-	{% else %}
-	<p>No polls are available.</p>
+	<center>
+	<div class="content">
+		<h3 style="margin-bottom: 0px">
+	    	Чансаа
+	    </h3>
+		<table  class="table table-striped" width="100%">
+		  <tr> 
+		  	<th style="text-align: center;"width="50px">#</th>
+		  	<th style="text-align: center;">Хэрэглэгч</th>
+		  	<th style="text-align: center;"width="50px">Бодсон</th>
+		  </tr>
+		  {% for rank in rank_list %}
+		  <tr>
+		  	<td style="text-align: center;"> {{rank.rank_index}} </td>
+		    <td> 
+		    	<a href="{% url 'polls:user' rank.userId %}" style="float: left; padding-left: 10px; ">{{ rank.userName }}</a>
+		   	</td>
+		   	<td style="text-align: center;"> {{rank.solved}}</td>
+		  </tr>
+		  {% endfor %}
+		</table>
+		{% else %}
+		<p>No polls are available.</p>
+		</center>
+	</div>
 	{% endif %}
 	
 {% endblock %}
