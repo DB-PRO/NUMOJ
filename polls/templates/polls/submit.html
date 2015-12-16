@@ -1,27 +1,53 @@
 {% extends "polls/base.html" %}
 
 {% block submit %}
-  <div>
-    <h1>Илгээх</h1>
-
-      {% csrf_token %}
-
-      <form action="{% url 'polls:submitAction' %}" method="post">
+  
+    <div>
+      <center>
+        <h3>Илгээх</h3>
+      </center>
         {% csrf_token %}
-      
-        <label for="problemId">Бодлогын дугаар</label>
-        <input type="text" name="problemId">
-        
-        <label for="Pro">Програмчлалын хэл:</label>
 
-        <select name="lang">
-		      <option value="volvo">C++</option>
-		      <option value="saab">Pascal</option>
-		      <option value="mercedes">Python</option>
-		      <option value="mercedes">Java</option>
-		    </select>
-        
-        <input type="submit" value="create" />
-      </form>
-  </div>
+            <form action="{% url 'polls:submitAction' %}" method="post">
+          {% csrf_token %}
+
+          <table width="100%">
+            <tbody>
+              <tr>
+                <td height="50px">
+                  <label for="problemId" style="float: right">Бодлогын дугаар:</label>  
+                </td>
+                <td style="padding-left: 20px">
+                  <input type="text" name="problemId" style="width: 175px">
+                </td>
+              </tr>
+              <tr>
+                <td height="50px">
+                  <label for="problemId" style="float: right">Бодолт:</label>  
+                </td>
+                <td style="padding-left: 20px">
+                     <TEXTAREA name="code" rows="20" cols="80"></TEXTAREA>
+                </td>
+              </tr>
+              <tr>
+                <td height="50px">
+                  <label for="Pro" style="float: right">Програмчлалын хэл: </label>
+                </td>
+                <td style="padding-left: 20px">
+                  <select name="lang" style="width: 175px">
+                    <option value="C++">C++</option>
+                    <option value="Pascal">Pascal</option>
+                    <option value="Python">Python</option>
+                    <option value="Java">Java</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <center>
+            <button type="submit" value="Илгээх" style="margin-top: 10px" class="btn btn-info">Илгээх</button>
+          </center>
+        </form>
+    </div>
 {% endblock %}

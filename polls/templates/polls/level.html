@@ -4,28 +4,36 @@
     
     {% if problem_list %}
 	    <center>
-		    <div class="content">
+	    	<div class="content">
 			    <h3 style="margin-bottom: 0px">
 			    	Бодлогууд
 			    </h3>
-				<table class="table table-striped" width="100%">
+		    	<table class="table table-striped" width="100%">
 				  <tr> 
 				  	<th width="50px" style="text-align: center;">#</th>
 				  	<th style="text-align: center;">Нэр</th>
-				  	<th width="70px" style="text-align: center;">Төвшин</th>
+				  	<th width="70px" style="text-align: center;">Түвшин</th>
 				  	<th width="70px" style="text-align: center;">Бодсон</th>
 				  </tr>
-				  {% for item1, item2 in list %}
-				  <tr>
+				  {% for item1, item2, item3, item4 in list %}
+				  <tr
+				  	{% if item4 == 1 %} 
+				  		class="success"
+				  	{% elif item4 == 2%}
+				  		class="danger"
+				  	{% endif %}
+				  	>
 				  	<td style="text-align: center;"> {{item1.id}} </td>
 				    <td> 
 				    	<a href="{% url 'polls:problem' item1.id %}" style="float: left; padding-left: 10px; ">{{ item1.problemName }}</a>
 				    	{% for x in item2 %}
-				    		<a href="{% url 'polls:tag' x.id 1 %}" style="float: right; padding-right: 10px; ">{{ x.tagName }}</a>
+				    		<a href="{% url 'polls:tag' x.id 1 %}" style="float: right; padding-right: 10px; ">
+				    			<span class="badge">{{ x.tagName }}</span>
+				    		</a>
 				    	{% endfor %}
 				   	</td>
 				   	<td style="text-align: center;"><a href="{% url 'polls:level' item1.level 1 %}">{{ item1.level }}</a></td>
-				   	<td style="text-align: center;">123</td>
+				   	<td style="text-align: center;"><a href="{% url 'polls:pstatus' item1.id 1 %}">{{item3}}</a></td>
 				  </tr>
 				  {% endfor %}
 				</table>

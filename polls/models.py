@@ -27,7 +27,6 @@ class Problem(models.Model):
     def __str__(self):
         return self.problemName
     
-    
 class Submission(models.Model):
     type_status = (
         ('Accepted', 'AC'), ('Time limit exceeded', 'TLE'), ('Wrong answer', 'WA')
@@ -40,11 +39,11 @@ class Submission(models.Model):
     Language = models.CharField(default = "C++", max_length = 20)
     Time = models.FloatField(default = 0.0)
     Memory = models.IntegerField(default = 0)
-    code = models.CharField(max_length = 1000, default = "..code..")
-    
-    def __str__(self):
-        return self.problem.problemName + ' ' + self.user.username
+    code = models.CharField(default = "..code..", max_length = 1000)
 
+    def __str__(self):
+        return self.user.username
+    
     
 class News(models.Model):
     title = models.CharField(max_length = 1000)

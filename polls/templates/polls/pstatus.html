@@ -1,0 +1,83 @@
+{% extends "polls/base.html" %}
+
+{% block problems %}
+    
+    {% if status_list %}
+	    <center>
+		    <div class="content">
+			    <h3 style="margin-bottom: 0px">
+			    	Бодолт
+			    </h3>
+		    	<table class="table table-striped" width="100%">
+				  <tr> 
+				  	<th style="text-align: center;"width="50px">#</th>
+				  	<th style="text-align: center;">Хэзээ</th>
+				  	<th style="text-align: center;">Хэрэглэгч</th>
+				  	<th style="text-align: center;">Бодлого</th>
+				  	<th style="text-align: center;">Хэл</th>
+				  	<th style="text-align: center;">Үр дүн</th>
+				  	<th style="text-align: center;"width="50px">Хугцаа</th>
+				  	<th style="text-align: center;"width="50px">Санах ой</th>
+				  </tr>
+				  {% for status in status_list %}
+				  <tr
+  				  	{% if status.status == "Accepted" %} 
+				  		class="success"
+				  	{% elif status.status == "Time limit exceeded" %}
+				  		class="warning"
+				  	{% elif status.status == 'Wrong answer' %}
+				  		class="danger"
+				  	{% endif %}
+				  	>
+				  	<td style="text-align: center;"> {{status.id}} </td>
+				  	<td style="text-align: center;"> {{status.submittedDate}} </td>
+				  	<td style="text-align: center;"> 
+				  		<a href="{% url 'polls:userN' status.user %} ">{{status.user}} </a>
+				  	</td>
+				  	<td style="text-align: center;"> 
+				  		<a href="{% url 'polls:problemN' status.problem %} ">{{status.problem}} </a>
+				  	</td>
+				  	<td style="text-align: center;"> {{status.Language}} </td>
+				  	<td style="text-align: center;"> {{status.status}} </td>
+				  	<td style="text-align: center;"> {{status.Time}} </td>
+				  	<td style="text-align: center;"> {{status.Memory}} </td>
+				  </tr>
+				  {% endfor %}
+				</table>
+			</div>
+			<div class="pagination">
+			    <span class="step-links">
+			    	<ul class="pager">
+				        {% if page_list.has_previous %}
+	  						<li class="previous">
+						            <a href="{% url 'polls:pstatus' pid status_list.previous_page_number %} ">Өмнөх</a>
+					        </li>
+				        {% endif %}
+
+						<ul class="pagination" style="margin-top: 0px">
+							{% for i in pages %}
+								{% if i == status_list.number %}
+									<li class="active"><a href="{% url 'polls:pstatus' pid i %}">{{i}}</a></li>
+								{% elif i == 0 %}
+									<li class="disabled"><a href="{% url 'polls:pstatus' pid 1 %}">...</a></li>
+								{% else %}		
+									<li><a href="{% url 'polls:pstatus' pid i %}">{{i}}</a></li>
+								{% endif %}
+							{% endfor %}
+	  					</ul>
+  						
+						{% if status_list.has_next %}
+	  						<li class="next"><a href="{% url 'polls:pstatus' pid status_list.next_page_number %} ">Дараах</a></li>
+				        {% endif %}
+					</ul>
+			    </span>
+			</div>
+		</center>
+	{% else %}
+		<p>No polls are available.</p>
+	{% endif %}
+
+	{% if add_problem %}
+		<a href = "{% url 'polls:createProblem' %}"> create Problem </a>
+	{% endif%}
+{% endblock %}

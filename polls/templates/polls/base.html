@@ -4,6 +4,9 @@
 
 <html>
 <head>
+    <link media="all" href="{% static '/polls/nv.d3.css' %}" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="{% static '/polls/d3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static '/polls/nv.d3.min.js' %}"></script>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,6 +16,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <!-- Timeline CSS -->
+    <script src="{% static 'polls/canvasjs.min.js' %}"></script>
+    <script src="{% static 'polls/jquery-2.1.4.min.js' %}"></script>
+    <script src="{% static 'polls/Chart.js' %}"></script>
     <link href="{% static 'polls/dist/css/timeline.css' %}" rel="stylesheet">
 
     <!-- Custom CSS -->
@@ -50,11 +56,15 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="{% static 'polls/dist/js/sb-admin-2.js' %}"></script>
-    <script type="text/javascript">
-        function my_callback(data){
-           alert(data.message);
-        }
     
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script src="{% static 'polls/myjs.js' %}"></script>                                                                                                           
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.oesmith.co.uk/morris-0.5.1.css" rel="stylesheet">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.0/morris.min.js"></script>
+
     </script>
 </head>
 
@@ -70,7 +80,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{% url 'polls:index' %}">NUM Online Judge</a>
+                <img src="{% static 'polls/images/num.png' %}" style="padding-top: 10px; float: left; padding-left: 10px">
+                <a class="navbar-brand" href="{% url 'polls:index' %}" style="color: #1178bb; padding-top: 20px" >
+                    NUM Online Judge
+                </a>
             </div>
             <!-- top menu-->
             <div class="navbar-collapse collapse">
@@ -89,7 +102,7 @@
                     <li><a href="{% url 'polls:problems' 1 %}"><img src="{% static 'polls/icons/64/game93.png' %}" class="icon"> Бодлогууд</a></li>
                     <li><a href="{% url 'polls:rank'%}"><img src="{% static 'polls/icons/64/ranking.png' %}" class="icon"> Чансаа</a></li> 
                     <li><a href="{% url 'polls:submit'%}"><img src="{% static 'polls/icons/64/send4.png' %}" class="icon"> Илгээх</a></li> 
-                    <li><a href="#"><img src="{% static 'polls/icons/64/lifeline6.png' %}" class="icon"> Үр дүн</a></li> 
+                    <li><a href="{% url 'polls:status' 1 %}"><img src="{% static 'polls/icons/64/lifeline6.png' %}" class="icon"> Үр дүн</a></li> 
                     <li class="dropdown" style="padding-right: 20px">
                         {% if member_id != 0 %}
                             <a class="dropdown-toggle" data-toggle="dropdown">
@@ -118,17 +131,21 @@
         </nav>
         <div id="container" style="padding-top: 0px">
             <div class="row">
-                <div class="col-sm-9">
+                <center>
+                    <div style="col-md-8 col-md-offset-4"> 
+                        {% block rank %}{% endblock %}
+                    </div>
+                </center>
+                <div class="col-md-9">
                         {% block News %}{% endblock %}
                         {% block Tag %}{% endblock %}
                         {% block login %}{% endblock %}
                         {% block problem %}{% endblock %}
                         {% block problems %}{% endblock %}
-                        {% block rank %}{% endblock %}
                         {% block submit %}{% endblock %}
                         {% block profile %}{% endblock %}
                 </div>
-                <div class="col-sm-3" style="padding-left: 30px; padding-top: 13px">
+                <div class="col-md-3" style="padding-left: 30px; padding-top: 13px">
                     <center>
                         {# sidebar top rating#}
                         {% if top_rank_list %}
@@ -161,6 +178,39 @@
                         </div>
                         {% endif %}
                     </center>
+                    <center>
+                        {# sidebar top rating#}
+                        {% if pStatus %}
+                        <div class="side">
+                            <div>
+                                <div class="side_header_left">
+                                </div>
+                                <div class="side_header">
+                                    Үр дүн
+                                </div>
+                            </div>
+                            <table width="100%" border="1">
+                                <thead>
+                                    <tr>
+                                        <th width="50px" style="text-align: center;">#</th>
+                                        <th style="text-align: center;">Хэрэглэгч</th>
+                                        <th width="70px" style="text-align: center;">Бодсон</th>
+                                    </tr>
+                                </thead>
+                              {% for rank in top_rank_list %}
+                              <tr>
+                                <td style="text-align: center;"> {{rank.rank_index}} </td>
+                                <td> 
+                                    <a href="{% url 'polls:user' rank.userId %}" style="float: left; padding-left: 10px; ">{{ rank.userName }}</a>
+                                </td>
+                                <td style="text-align: center;"> {{rank.solved}}</td>
+                              </tr>
+                              {% endfor %}
+                            </table>
+                        </div>
+                        {% endif %}
+                    </center>
+
                 </div>
             </div>
         </div>

@@ -4,18 +4,26 @@
 	
 	{% if rank_list %}
 	<center>
-	<div class="content">
+	<div class="content" style="width: 80%">
 		<h3 style="margin-bottom: 0px">
 	    	Чансаа
 	    </h3>
-		<table  class="table table-striped" width="100%">
+		<table  class="table table-striped">
 		  <tr> 
 		  	<th style="text-align: center;"width="50px">#</th>
 		  	<th style="text-align: center;">Хэрэглэгч</th>
 		  	<th style="text-align: center;"width="50px">Бодсон</th>
 		  </tr>
 		  {% for rank in rank_list %}
-		  <tr>
+		  <tr
+			  	{% if rank.rank == "red" %} 
+			  		class="danger"
+			  	{% elif rank.rank == "green" %}
+			  		class="success"
+			  	{% elif rank.rank == "blue" %}
+			  		class="info"
+			  	{% endif %}		  
+		  >
 		  	<td style="text-align: center;"> {{rank.rank_index}} </td>
 		    <td> 
 		    	<a href="{% url 'polls:user' rank.userId %}" style="float: left; padding-left: 10px; ">{{ rank.userName }}</a>

@@ -1,24 +1,35 @@
-{% extends "polls/base.html" %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Minimal Django File Upload Example</title>
+    </head>
 
-{% block login %}
-  <div>
-      <h1>Login</h1>
+    <body>
+        <!-- List of uploaded documents -->
+        {% if documents %}
+            <ul>
+                {% for document in documents %}
+                    <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No documents.</p>
+        {% endif %}
 
-      {% csrf_token %}
+        <!-- Upload form. Note enctype attribute! -->
+        <form action="{% url "list" %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p>{{ form.non_field_errors }}</p>
 
-      {% if flag %}
-      password is incorrect
-      {% endif %}
+            <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
 
-      <form action="{% url 'polls:login' %}" method="post">
-	  	{% csrf_token %}
-		
-		<label for="loginName">Name</label>
-		<input type="text" name="name">
-		<label for="password">password</label>
-		<input type="text" name="password">
-		
-		<input type="submit" value="create" />
-      </form>
-  </div>
-{% endblock %}
+            <p>
+                {{ form.docfile.errors }}
+                {{ form.docfile }}
+            </p>
+
+            <p><input type="submit" value="Upload"/></p>
+        </form>
+    </body>
+</html>

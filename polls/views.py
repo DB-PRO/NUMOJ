@@ -35,7 +35,7 @@ def index(request):
     context = {'problem_list': problem_list,
                'User_list': User_list, 'Tag_list': Tag_list, 
                'member_id': member_id, 'News_list': News_list,
-               'add_Tag': add_Tag}
+               'add_Tag': add_Tag, 'top_rank_list': get_rank(0)}
     
     return render(request, 'polls/home.html', context)
 
@@ -55,14 +55,14 @@ def view_login(request):
         if user is not None:
             login(request, user)
             request.session['member_id'] = user.id
-            return HttpResponseRedirect('/polls/home')
+            return HttpResponseRedirect('/polls/user/' + str(user.id))
         
         else:
             flag = True;
             request.session['member_id'] = 0
 
     request.session['member_id'] = 0;
-    context = {'flag': flag, 'member_id': 0}
+    context = {'flag': flag, 'member_id': 0, 'top_rank_list': get_rank(0)}
     return render(request, 'polls/login.html', context)
 
 
@@ -73,11 +73,53 @@ def problem(request, problem_id):
     return render(request, 'polls/problem.html', {'problem': problem, 'member_id': member_id, 'top_rank_list':top_rank_list})
 
 
-def user(request, user_id):
-    user = get_object_or_404(User, id = user_id)
+def problemN(request, problem_name):
+    member_id = request.session['member_id']
+    problem = get_object_or_404(Problem, problemName = problem_name)
+    top_rank_list = get_rank(0)
+    return render(request, 'polls/problem.html', {'problem': problem, 'member_id': member_id, 'top_rank_list':top_rank_list})
+
+
+def userN(request, user_name):
+    user = get_object_or_404(User, username = user_name)
     member_id = request.session['member_id']
     top_rank_list = get_rank(0)
     return render(request, 'polls/user.html', {'user': user, 'member_id': member_id, 'top_rank_list': top_rank_list})
+
+
+import datetime
+from django.utils.timezone import utc
+import json
+
+def user(request, user_id):
+    result = get_rank(1)
+    user = get_object_or_404(User, id = user_id)
+    member_id = request.session['member_id']
+    top_rank_list = get_rank(0)
+
+    rank = 0
+    for x in result:
+        if x['userName'] == user.first_name:
+            rank = x['rank_index']
+            solved = x['solved']
+
+    AC = Submission.objects.filter(user = user).filter(status = "Accepted").count()
+    WA = Submission.objects.filter(user = user).filter(status = "Wrong answer").count()
+    TLE = Submission.objects.filter(user = user).filter(status = "Time limit exceeded").count()
+    
+    s = Submission.objects.filter(user = user).filter(status = "Accepted")
+    Try = Submission.objects.filter(user = user).count()
+
+    data = [0] * 32
+    for x in s:
+        data[x.submittedDate.day] = data[x.submittedDate.day] + 1;
+
+    Data = []
+    for d in range(1, 10):
+        xx = str(12) + "." + str(d)
+        Data.append({'x': xx, 'y': data[d]})
+
+    return render(request, 'polls/user.html', {'solved': solved, 'Try': Try, 'Data': Data, 'rank': rank, 'user': user, 'member_id': member_id, 'top_rank_list': top_rank_list, 'AC': AC, 'WA':WA, 'TLE':TLE})
 
 
 def createTag(request):
@@ -192,13 +234,12 @@ def submit(request):
     return render(request, 'polls/submit.html', {'member_id': request.session['member_id'], 'top_rank_list': top_rank_list})
 
 def submitAction(request):
-
     user = User.objects.get(id = request.session['member_id'])
-
     problemId = request.POST['problemId']
+
     problem = Problem.objects.get(id = problemId)
     l = request.POST['lang']
-    
+    code = request.POST['code']
     ran = random.randint(1, 3)
     status = "Accepted";
     if ran == 2:
@@ -206,16 +247,22 @@ def submitAction(request):
     if ran == 3:
         status = 'Wrong answer'
 
-    a = Submission(user = user, problem = problem, Language = l, status = status)
+
+    a = Submission(user = user, problem = problem, Language = l, status = status, code = code)
     a.save()
+
+    a = Submission.objects.filter(problem = problem).filter(user = user).order_by('-id')[:1]
+    a = a[0]
+    with open("Sub/" + str(a.id) + ".txt", "w") as text_file:
+        text_file.write(code)
     
-    return HttpResponseRedirect('/polls/home')
+    return HttpResponseRedirect('/polls/status/1')
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def problems(request, page):
     problem_list = Problem.objects.order_by('id')
-    paginator = Paginator(problem_list, 20) 
+    paginator = Paginator(problem_list, 20)
 
     if not request.session.get('member_id', None):
         request.session['member_id'] = 0
@@ -231,8 +278,23 @@ def problems(request, page):
         problem_list = paginator.page(paginator.num_pages)
 
     pTag = []
+    solved = []
+    iam = []
+    if member_id != 0:
+        user = User.objects.get(id = member_id)
     for x in problem_list:
         pTag.append(x.tag.all())
+        solved.append(Submission.objects.filter(problem = x).filter(status = "Accepted").count())
+        if member_id == 0:
+            iam.append(0)
+        elif member_id != 0:
+            if Submission.objects.filter(problem = x).filter(status = "Accepted").filter(user = user).count() > 0:
+                iam.append(1)
+            elif Submission.objects.filter(problem = x).filter(user = user).count() > 0:
+                iam.append(2)
+            else :
+                iam.append(0)
+
 
     pages = []
     for i in range(1, problem_list.paginator.num_pages + 1):
@@ -251,14 +313,14 @@ def problems(request, page):
             if i - problem_list.number == 1 and problem_list.number != problem_list.paginator.num_pages - 3:
                 pages.append(0)
 
-    list = zip(problem_list.object_list, pTag)
+    list = zip(problem_list.object_list, pTag, solved, iam)
     return render(request, 'polls/problems.html', {'list': list, 'pTag': pTag, 'member_id': request.session['member_id'], 'top_rank_list': get_rank(0), "problem_list": problem_list, "pages": pages})
 
 
 def tag(request, tag_id, page):
     t = Tag.objects.filter(id = tag_id)
-    problem_list = Problem.objects.filter(tag = t)
-    paginator = Paginator(problem_list, 20) 
+    problem_list = Problem.objects.order_by('id').filter(tag = t)
+    paginator = Paginator(problem_list, 20)
 
     if not request.session.get('member_id', None):
         request.session['member_id'] = 0
@@ -274,8 +336,22 @@ def tag(request, tag_id, page):
         problem_list = paginator.page(paginator.num_pages)
 
     pTag = []
+    iam = []
+    solved = []
+    if member_id != 0:
+        user = User.objects.get(id = member_id)
     for x in problem_list:
         pTag.append(x.tag.all())
+        solved.append(Submission.objects.filter(problem = x).filter(status = "Accepted").count())
+        if member_id == 0:
+            iam.append(0)
+        elif member_id != 0:
+            if Submission.objects.filter(problem = x).filter(status = "Accepted").filter(user = user).count() > 0:
+                iam.append(1)
+            elif Submission.objects.filter(problem = x).filter(user = user).count() > 0:
+                iam.append(2)
+            else :
+                iam.append(0)
 
     pages = []
     for i in range(1, problem_list.paginator.num_pages + 1):
@@ -294,7 +370,7 @@ def tag(request, tag_id, page):
             if i - problem_list.number == 1 and problem_list.number != problem_list.paginator.num_pages - 3:
                 pages.append(0)
 
-    list = zip(problem_list.object_list, pTag)
+    list = zip(problem_list.object_list, pTag, solved, iam)
     return render(request, 'polls/tag.html', {'tag_id': tag_id, 'list': list, 'pTag': pTag, 'member_id': request.session['member_id'], 'top_rank_list': get_rank(0), "problem_list": problem_list, "pages": pages})
 
 
@@ -316,8 +392,22 @@ def level(request, l, page):
         problem_list = paginator.page(paginator.num_pages)
 
     pTag = []
+    iam = []
+    solved = []
+    if member_id != 0:
+        user = User.objects.get(id = member_id)
     for x in problem_list:
         pTag.append(x.tag.all())
+        solved.append(Submission.objects.filter(problem = x).filter(status = "Accepted").count())
+        if member_id == 0:
+            iam.append(0)
+        elif member_id != 0:
+            if Submission.objects.filter(problem = x).filter(status = "Accepted").filter(user = user).count() > 0:
+                iam.append(1)
+            elif Submission.objects.filter(problem = x).filter(user = user).count() > 0:
+                iam.append(2)
+            else :
+                iam.append(0)
 
     pages = []
     for i in range(1, problem_list.paginator.num_pages + 1):
@@ -336,5 +426,88 @@ def level(request, l, page):
             if i - problem_list.number == 1 and problem_list.number != problem_list.paginator.num_pages - 3:
                 pages.append(0)
 
-    list = zip(problem_list.object_list, pTag)
+    list = zip(problem_list.object_list, pTag, solved, iam)
     return render(request, 'polls/level.html', {'level_id': l, 'list': list, 'pTag': pTag, 'member_id': request.session['member_id'], 'top_rank_list': get_rank(0), "problem_list": problem_list, "pages": pages})
+
+
+def pstatus(request, pid, page):
+    x = Problem.objects.get(id = pid)
+    status_list = Submission.objects.filter(problem = x).filter(status = "Accepted")
+    paginator = Paginator(status_list, 20)
+
+    if not request.session.get('member_id', None):
+        request.session['member_id'] = 0
+    member_id = request.session['member_id']
+
+    try:
+        status_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        status_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        status_list = paginator.page(paginator.num_pages)
+
+    pages = []
+    for i in range(1, status_list.paginator.num_pages + 1):
+        if status_list.paginator.num_pages == status_list.number and i == status_list.number - 1:
+            pages.append(0)            
+        elif 1 == status_list.number and i == status_list.number + 2:
+            pages.append(0)
+        if i <= 2: 
+            pages.append(i)
+        elif status_list.paginator.num_pages - i <= 1:
+            pages.append(i)
+        elif abs(i - status_list.number) <= 1:
+            if status_list.number - i == 1 and status_list.number - 2 != 2:
+                pages.append(0)
+            pages.append(i)
+            if i - status_list.number == 1 and status_list.number != status_list.paginator.num_pages - 3:
+                pages.append(0)
+    
+    return render(request, 'polls/pstatus.html', {'pid': pid, 'member_id': request.session['member_id'], 'top_rank_list': get_rank(0), "status_list": status_list, "pages": pages})
+
+def status(request, page):
+    status_list = Submission.objects.order_by('-id')
+    paginator = Paginator(status_list, 10)
+
+    if not request.session.get('member_id', None):
+        request.session['member_id'] = 0
+    member_id = request.session['member_id']
+
+    try:
+        status_list = paginator.page(page)
+    except PageNotAnInteger:
+        status_list = paginator.page(1)
+    except EmptyPage:
+        status_list = paginator.page(paginator.num_pages)
+
+    pages = []
+    for i in range(1, status_list.paginator.num_pages + 1):
+        if status_list.paginator.num_pages == status_list.number and i == status_list.number - 1:
+            pages.append(0)            
+        elif 1 == status_list.number and i == status_list.number + 2:
+            pages.append(0)
+        if i <= 2: 
+            pages.append(i)
+        elif status_list.paginator.num_pages - i <= 1:
+            pages.append(i)
+        elif abs(i - status_list.number) <= 1:
+            if status_list.number - i == 1 and status_list.number - 2 != 2:
+                pages.append(0)
+            pages.append(i)
+            if i - status_list.number == 1 and status_list.number != status_list.paginator.num_pages - 3:
+                pages.append(0)
+
+    return render(request, 'polls/status.html', {'member_id': member_id, 'top_rank_list': get_rank(0), "status_list": status_list, "pages": pages})
+
+
+def demo_piechart(request):
+    """
+    pieChart page
+    """
+    if not request.session.get('member_id', None):
+        request.session['member_id'] = 0
+    member_id = request.session['member_id']
+
+    return render(request, 'polls/piechart.html', {'member_id': member_id})

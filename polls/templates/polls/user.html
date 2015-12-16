@@ -1,25 +1,181 @@
 {% extends "polls/base.html" %}
 
 {% block profile %}
+{% load staticfiles %}
 
-<h1>{{ user.username }} {{ user.firstName }} {{user.lastName}}</h1>
-<hr>
+<div class="content">
+  <div class="row" style="padding-left: 50px; padding-top: 50px">
+    <div class="col-md-3">
+      <img src="{% static 'polls/icons/256/user168.png' %}" width="170px"> 
+      <h3
+        {% if user.rank == "red" %} 
+          style = "background-color: #323232"
+        {% elif user.rank == "green" %}
+          style = "background-color: green"
+        {% elif user.rank == "blue" %}
+          style = "background-color: blue"
+        {% endif %}
+      >
+        {{user.first_name}}
+        <br>
+        {{user.last_name}}
+      </h3>
+      <h4>
+        @{{user.username}}
+      </h4>
+      <p>
+        <img src="{% static 'polls/icons/64/clock96.png' %}" width="20px" style="margin-right: 5px"> 
+        {{user.date_joined}}
+      </p>
+      <p>
+        <img src="{% static 'polls/icons/64/ranking.png' %}" width="20px" style="margin-right: 5px"> 
+        {{rank}}
+      </p>
+      <p>
+        <img src="{% static 'polls/icons/64/email5.png' %}" width="20px" style="margin-right: 5px">  
+        {{user.email}}
+      </p>
+      <p>
+        <img src="{% static 'polls/icons/64/game93.png' %}" width="20px" style="margin-right: 5px"> 
+        {{solved}}
+      </p>
+      <p>
+        <img src="{% static 'polls/icons/64/send4.png' %}" width="20px" style="margin-right: 5px"> 
+        {{Try}}
+      </p>
 
-<table border = "1">
-  <strong>
-    <tr>
-      <th> ProblemName </th>
-      <th> Status </th>
-      <th> DateTime </th>
-    </tr>
-  </strong>
-  {% for submission in user.submission_set.all %}
-  <tr>
-    <th> {{submission.problem.problemName}} </th>
-    <th> {{submission.status}} </th>
-    <th> {{submission.submittedDate}} </th>
-  </tr>
-  {% endfor %}
-</table>
+      <canvas id="mycanvas" width="170" height="200">
+      <script>
+        $(document).ready(function(){
+          var ctx = $("#mycanvas").get(0).getContext("2d");
 
+          //pie chart data
+          //sum of values = 360
+          var data = [
+            {
+              value: {{AC}},
+              color: "green",
+              highlight: "darkgreen",
+              label: "Тэнцсэн"
+            },
+            {
+              value: {{WA}},
+              color: "red",
+              highlight: "darkred",
+              label: "Буруу хариулт"
+            },
+            {
+              value: {{TLE}},
+              color: "orange",
+              highlight: "darkorange",
+              label: "XXX"
+            }
+          ];
+
+          //draw
+          var piechart = new Chart(ctx).Pie(data);
+        });
+      </script>
+      </canvas>
+      <br>
+      <strong>
+        <table>
+          <tr style="height:30px">
+            <td><img src="{% static 'polls/icons/64/1.png' %}" width="20px" height="20px"></td>
+            <td style="padding-left: 5px">{{AC}}</td>
+            <td style="padding-left: 5px">Тэнцсэн</td>
+          </tr>
+          <tr style="height:30px">
+            <td><img src="{% static 'polls/icons/64/3.png' %}" width="20px" height="20px" style="margin-top: 5px"></td>
+            <td style="padding-left: 5px">{{WA}}</td>
+            <td style="padding-left: 5px">Буруу хариулт</td>
+          </tr>
+          <tr style="height:30px">
+            <td><img src="{% static 'polls/icons/64/2.png' %}" width="20px" height="20px" style="margin-top: 5px"></td>
+            <td style="padding-left: 5px">{{TLE}}</td>
+            <td style="padding-left: 5px">Хугацааны хязгаарлалт хэтэрсэн</td>
+          </tr>
+        </table>
+      </strong>
+    </div>
+    <div class="col-md-9">
+      <script type="text/javascript">
+        window.onload = function () {
+          CanvasJS.addColorSet("greenShades",
+                  [//colorSet Array
+
+                  "#DFF0D8",
+                  "#2E8B57",
+                  "#3CB371",
+                  "#90EE90"                
+                  ]);
+          
+          var chart = new CanvasJS.Chart("chartContainer",
+          {
+            animationEnabled: true,
+            title:{
+              text: ""
+            },
+            data: [
+            {
+              type: "spline", //change type to bar, line, area, pie, etc
+              showInLegend: true,        
+              name: "Бодсон бодлого",
+              dataPoints: [
+                  {% for u in Data %}
+                    { x: {{u.x}}, y: {{u.y}} },
+                  {% endfor %}
+              ]
+              }
+            ],
+            legend: {
+              cursor: "pointer",
+              itemclick: function (e) {
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                  e.dataSeries.visible = false;
+                } else {
+                  e.dataSeries.visible = true;
+              }
+              chart.render();
+              }
+            }
+          });
+          chart.render();
+        }
+      </script>
+      <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+      <table class="table table-striped" width="100%">
+        <strong>
+          <tr>
+            <th> # </th>
+            <th> Хэзээ </th>
+            <th> Нэр </th>
+            <th> Үр дүн </th>
+            <th> Хэл </th>
+            <th> Санах ой </th>
+          </tr>
+        </strong>
+        {% for submission in user.submission_set.all %}
+          <tr
+              {% if submission.status == "Accepted" %} 
+                class="success"
+              {% elif submission.status == "Time limit exceeded" %}
+                class="warning"
+              {% elif submission.status == 'Wrong answer' %}
+                class="danger"
+              {% endif %}
+          >
+          <th> {{submission.id}} </th>
+          <th> {{submission.submittedDate}} </th>
+          <th> <a href="{% url 'polls:problemN' submission.problem.problemName %} ">{{submission.problem.problemName}} </a></th>
+          <th> {{submission.status}} </th>
+          <th> {{submission.Language}} </th>
+          <th> {{submission.Memory}} </th>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+</div>
 {% endblock %}
