@@ -14,7 +14,7 @@
 			  	<th style="text-align: center;">Бодлого</th>
 			  	<th style="text-align: center;">Хэл</th>
 			  	<th style="text-align: center;">Үр дүн</th>
-			  	<th style="text-align: center;">Хугцаа</th>
+			  	<th style="text-align: center;">Хугацаа</th>
 			  	<th style="text-align: center;">Санах ой</th>
 			  </tr>
 			  {% for status in status_list %}
@@ -23,7 +23,7 @@
 					  		class="success"
 					  	{% elif status.status == "Time limit exceeded" %}
 					  		class="warning"
-					  	{% elif status.status == 'Wrong answer' %}
+					  	{% else %}
 					  		class="danger"
 					  	{% endif %}
 				  >

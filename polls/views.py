@@ -42,7 +42,7 @@ def index(request):
 
 def view_login(request):
     flag = False
-    
+    request.session['pro'] = 0
     request.session['member_id'] = 0
 
     logout(request)
@@ -70,6 +70,7 @@ def problem(request, problem_id):
     member_id = request.session['member_id']
     problem = get_object_or_404(Problem, id = problem_id)
     top_rank_list = get_rank(0)
+    request.session['pro'] = problem_id
     return render(request, 'polls/problem.html', {'problem': problem, 'member_id': member_id, 'top_rank_list':top_rank_list})
 
 
@@ -77,6 +78,7 @@ def problemN(request, problem_name):
     member_id = request.session['member_id']
     problem = get_object_or_404(Problem, problemName = problem_name)
     top_rank_list = get_rank(0)
+    request.session['pro'] = problem.id
     return render(request, 'polls/problem.html', {'problem': problem, 'member_id': member_id, 'top_rank_list':top_rank_list})
 
 
@@ -96,7 +98,7 @@ def user(request, user_id):
     user = get_object_or_404(User, id = user_id)
     member_id = request.session['member_id']
     top_rank_list = get_rank(0)
-
+    
     rank = 0
     for x in result:
         if x['userName'] == user.first_name:
@@ -231,7 +233,13 @@ def rank(request):
 
 def submit(request):
     top_rank_list = get_rank(0)
-    return render(request, 'polls/submit.html', {'member_id': request.session['member_id'], 'top_rank_list': top_rank_list})
+    if not request.session.get('pro', None):
+        request.session['pro'] = 0;
+    return render(request, 'polls/submit.html', {'member_id': request.session['member_id'], 'top_rank_list': top_rank_list, 'pro': request.session['pro']})
+
+import os
+import decimal
+import math
 
 def submitAction(request):
     user = User.objects.get(id = request.session['member_id'])
@@ -240,15 +248,22 @@ def submitAction(request):
     problem = Problem.objects.get(id = problemId)
     l = request.POST['lang']
     code = request.POST['code']
-    ran = random.randint(1, 3)
-    status = "Accepted";
-    if ran == 2:
-        status = 'Time limit exceeded'
-    if ran == 3:
-        status = 'Wrong answer'
+    
+    inn = problem.input
+    out = problem.output
+    with open("input.txt", "w") as text_file:
+        text_file.write(inn)
+    with open("answer.txt", "w") as text_file:
+        text_file.write(out)
 
+    with open("ab.cpp", "w") as text_file:
+        text_file.write(code)
+    f = os.popen("python3 judge.py")
+    temp = f.read()
+    flag = temp.split('\n')[1]
+    time = temp.split('\n')[0]
 
-    a = Submission(user = user, problem = problem, Language = l, status = status, code = code)
+    a = Submission(user = user, problem = problem, Language = l, status = flag, code = code, Time = time)
     a.save()
 
     a = Submission.objects.filter(problem = problem).filter(user = user).order_by('-id')[:1]
@@ -511,3 +526,40 @@ def demo_piechart(request):
     member_id = request.session['member_id']
 
     return render(request, 'polls/piechart.html', {'member_id': member_id})
+
+
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
+from .serializers import UserSerializer, GroupSerializer, ProblemSerializer, SubmissionSerializer
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+
+
+class ProblemViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Problems to be viewed or edited.
+    """
+    queryset = Problem.objects.all()
+    serializer_class = ProblemSerializer
+
+
+class SubmissionViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Problems to be viewed or edited.
+    """
+    queryset = Submission.objects.all()
+    serializer_class = SubmissionSerializer    

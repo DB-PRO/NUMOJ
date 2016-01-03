@@ -18,7 +18,11 @@
                   <label for="problemId" style="float: right">Бодлогын дугаар:</label>  
                 </td>
                 <td style="padding-left: 20px">
-                  <input type="text" name="problemId" style="width: 175px">
+                  <input type="text" name="problemId" style="width: 175px" 
+                    {% if pro %}
+                      value={{pro}}
+                    {% endif%}
+                  >
                 </td>
               </tr>
               <tr>
